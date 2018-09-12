@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.1.1/socket.io.dev.js"></script>
+    <title>Document</title>
+    <style>
+        .chat-room{
+            width: 400px;
+            height: 600px;
+            border: 1px solid #2dafff;
+            position: relative;
+        }
+        .enter_message{
+            position: absolute;
+            bottom: 5px;
+            width: 380px;
+            height: 60px;
+            left: 9px;
+        }
+        .enter_message>input{
+            border: 1px solid #2dafff;
+            position: absolute;
+            width: 380px;
+            height: 60px;
+            bottom: 0;
+        }
+        .enter_message>a{
+            width: 80px;
+            height: 62px;
+            background: #2daff2;
+            position: absolute;
+            right: 0;
+            bottom: 2px;
+            text-align: center;
+            line-height: 60px;
+            color: #ffffff;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <h2 id="welcome"></h2>
+    <button id="btn">点我发送信息到服务端</button>
+    <button id="add_User">点我添加一个用户</button>
+    <button id="delete">点我删除一个用户</button>
+    <div class="chat-room">
+        <ul id="list">
+        
+        </ul>
+        <div class="enter_message">
+            <input placeholder="请输入要发送的数据"  />
+            <a id="send_Message">发送</a>
+        </div>
+    </div>
+    <script>
+            var socket = io();
+            var btn = document.querySelector("#btn");
+            var welcome = document.querySelector("#welcome");
+            var list = document.querySelector("#list");
+            var addUser = document.querySelector("#add_User");
+            var deleteUser = document.querySelector("#delete");
+            var sendMessage = document.querySelector("#send_Message");
+            //初始化接受服务端的初始发送信息
+            socket.on("welcome", function(res){
+                welcome.innerText = res;
+            });
+            btn.addEventListener("click", function(){
+                socket.emit("chat message", "点击发送过的。。。");
+            })
+            function renderList () {
+                socket.on("onLine user", function(res){
+                    list.innerHTML = "";
+                    for(let i = 0; i< res.length; i++) {
+                        var li = document.createElement("li");
+                        li.innerHTML = "<span>" + res[i].name +"</span>" + "<span>" + res[i].age + "</span>";
+                        list.appendChild(li);
+                    }
+                });
+            }
+            addUser.addEventListener("click", function(){
+                socket.emit("add User", JSON.stringify({name: "WangEr", age: 50}));
+            });
+            deleteUser.addEventListener("click", function(){
+                socket.emit("delete User");
+            });
+            sendMessage.addEventListener("click", function(){
+                socket.emit();
+            });
+            renderList();
+    </script>
+</body>
+</html>
